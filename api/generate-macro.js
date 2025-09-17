@@ -1,18 +1,20 @@
 // Файл: api/generate-macro.js
 module.exports = async (req, res) => {
-  // Обязательно устанавливаем заголовки CORS
+  // Настройка CORS
   res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
 
-  // Обрабатываем preflight-запросы
+  // Обработка preflight запросов
   if (req.method === 'OPTIONS') {
     return res.status(200).end();
   }
 
-  // Простой JSON-ответ
+  // Получаем данные из query-параметра
+  const clinicalData = req.query.clinicalData || 'данные не предоставлены';
+
+  // Возвращаем JSON-ответ
   return res.status(200).json({ 
-    success: true,
-    result: "Макроописание: Сервер работает корректно! Проверка связи успешна."
+    result: `Макроописание на основе: ${clinicalData}` 
   });
 };
