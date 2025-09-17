@@ -34,12 +34,11 @@
             resultTextarea.value = "Идет генерация...";
 
             try {
-                // ИСПРАВЛЕННЫЙ КОД: используем GET вместо POST
+                // ПРАВИЛЬНЫЙ URL с параметром
                 const response = await fetch(YOUR_VERCEL_APP_URL + '/api/generate-macro?clinicalData=' + encodeURIComponent(clinicalText), {
-                    method: 'GET' // Простой GET-запрос
+                    method: 'GET'
                 });
 
-                // Проверяем статус ответа
                 if (!response.ok) {
                     throw new Error(`Ошибка сервера: ${response.status}`);
                 }
