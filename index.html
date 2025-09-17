@@ -34,15 +34,15 @@
             resultTextarea.value = "Идет генерация...";
 
             try {
-                const response = await fetch(YOUR_VERCEL_APP_URL + '/api/generate-macro', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        clinicalData: clinicalText
-                    })
+                // ИСПРАВЛЕННЫЙ КОД: используем GET вместо POST
+                const response = await fetch(YOUR_VERCEL_APP_URL + '/api/generate-macro?clinicalData=' + encodeURIComponent(clinicalText), {
+                    method: 'GET' // Простой GET-запрос
                 });
+
+                // Проверяем статус ответа
+                if (!response.ok) {
+                    throw new Error(`Ошибка сервера: ${response.status}`);
+                }
 
                 const data = await response.json();
                 resultTextarea.value = data.result;
