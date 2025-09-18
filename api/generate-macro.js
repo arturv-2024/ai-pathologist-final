@@ -1,4 +1,6 @@
 const DEEPSEEK_API_KEY = process.env.DEEPSEEK_API_KEY;
+const fs = require('fs');
+const path = require('path');
 
 module.exports = async (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
@@ -14,7 +16,10 @@ module.exports = async (req, res) => {
   }
 
   try {
-    // Запрос к DeepSeek API
+    // Читаем промт из файла
+    const promptPath = path.join(process.cwd(), 'prompts', 'macro.txt');
+    const systemPrompt = fs.readFileSync(promptPath, 'utf8');
+
     const response = await fetch('https://api.deepseek.com/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -26,7 +31,7 @@ module.exports = async (req, res) => {
         messages: [
           {
             role: 'system',
-            content: 'Ты — ассистент патологоанатома. Сгенерируй краткое макроскопическое описание на основе предоставленных данных. Будь точным и используй медицинские термины.'
+            content: systemPrompt
           },
           {
             role: 'user',
@@ -37,14 +42,10 @@ module.exports = async (req, res) => {
       })
     });
 
-    if (!response.ok) {
-      throw new Error(`Ошибка DeepSeek API: ${response.status}`);
-    }
-
+    if (!response.ok) throw new Error(`Ошибка API: ${response.status}`);
+    
     const data = await response.json();
-    const generatedText = data.choices[0].message.content;
-
-    res.status(200).json({ result: generatedText });
+    res.status(200).json({ result: data.choices[0].message.content });
 
   } catch (error) {
     res.status(500).json({ error: error.message });
